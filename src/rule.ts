@@ -28,7 +28,7 @@ export async function handleTransaction(
   const InsufficientHistory = ruleConfig.config.exitConditions.find((b: { reason: string; subRuleRef: string }) => b.subRuleRef === '.x01');
   // Loop: find over ruleConfig.config.exitConditions
   const UnsuccessfulTransaction = ruleConfig.config.exitConditions.find(( b: { reason: string; subRuleRef: string }) => b.subRuleRef === '.x00');
-  if (req.transaction.FIToFIPmtSts.TxInfAndSts.TxSts !== 'ACCC') {
+  if (req.transaction.Payload.FIToFIPmtSts.TxInfAndSts.TxSts !== 'ACCC') {
     if (UnsuccessfulTransaction === undefined) {
       throw new Error('Unsuccessful transaction and no exit condition in config');
     }
