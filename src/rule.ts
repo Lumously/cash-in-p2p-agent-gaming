@@ -14,6 +14,10 @@ export async function handleTransaction(
   databaseManager: DatabaseManagerInstance<RuleExecutorConfig>,
 ): Promise<RuleResult> {
   const transaction = req.transaction as BaseMessage;
+  const payload = transaction.Payload as {
+    FIToFIPmtSts: { TxInfAndSts: { TxSts: string } };
+    GrpHdr: { CreDtTm: string };
+  };
   
   if (!ruleConfig.config.bands) {
     throw new Error('Invalid config provided - bands not provided');
@@ -28,14 +32,14 @@ export async function handleTransaction(
   const InsufficientHistory = ruleConfig.config.exitConditions.find((b: { reason: string; subRuleRef: string }) => b.subRuleRef === '.x01');
   // Loop: find over ruleConfig.config.exitConditions
   const UnsuccessfulTransaction = ruleConfig.config.exitConditions.find(( b: { reason: string; subRuleRef: string }) => b.subRuleRef === '.x00');
-  if (req.transaction.Payload.FIToFIPmtSts.TxInfAndSts.TxSts !== 'ACCC') {
+  if (payload.FIToFIPmtSts.TxInfAndSts.TxSts !== 'ACCC') {
     if (UnsuccessfulTransaction === undefined) {
       throw new Error('Unsuccessful transaction and no exit condition in config');
     }
     return { ...ruleRes, reason: UnsuccessfulTransaction.reason, subRuleRef: UnsuccessfulTransaction.subRuleRef};
   }
 
-  const currentPacs002TimeFrame = req.transaction.Payload.GrpHdr.CreDtTm;
+  const currentPacs002TimeFrame = payload.GrpHdr.CreDtTm;
 
   const creditorAccount = req.DataCache.cdtrAcctId;
 
