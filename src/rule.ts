@@ -35,7 +35,7 @@ export async function handleTransaction(
     return { ...ruleRes, reason: UnsuccessfulTransaction.reason, subRuleRef: UnsuccessfulTransaction.subRuleRef};
   }
 
-  const currentPacs002TimeFrame = req.transaction.FIToFIPmtSts.GrpHdr.CreDtTm;
+  const currentPacs002TimeFrame = req.transaction.Payload.GrpHdr.CreDtTm;
 
   const creditorAccount = req.DataCache.cdtrAcctId;
 
